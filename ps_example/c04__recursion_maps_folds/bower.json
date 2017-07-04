@@ -1,0 +1,19 @@
+{
+  "name": "c04__recursion_maps_folds",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-console": "^1.0.0",
+    "purescript-maybe": "^1.0.0",
+    "purescript-arrays": "^1.1.0",
+    "purescript-strings": "^1.1.0",
+    "purescript-foldable-traversable": "^1.0.0"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^1.0.0"
+  }
+}

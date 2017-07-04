@@ -1,0 +1,19 @@
+{
+  "name": "c03__functions_and_records",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-console": "^1.0.0",
+    "purescript-lists": "^1.0.1",
+    "purescript-datetime": "^1.0.0",
+    "purescript-integers": "^1.1.0",
+    "purescript-enums": "^1.1.0"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^1.0.0"
+  }
+}
