@@ -1,1 +1,8 @@
 *~
+*.o
+lleaves/plusc/first
+lleaves/plusc/stack_demo
+lleaves/plusc/extending
+lleaves/plusc/calling_c
+lleaves/plusc/techniques
+lleaves/plusc/*.so
