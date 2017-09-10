@@ -1,1 +1,5 @@
+__pycache__/
 *~
+
+pylearn/scikit_sand/tree.dot
+pylearn/scikit_sand/tree.png
