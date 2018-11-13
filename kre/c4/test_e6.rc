@@ -1,0 +1,30 @@
+#! /bin/rc
+
+calc='e6.out'
+
+fn assert_stack {
+	input=$1
+	expected_stack=$2
+	ifs='><' {output=`{echo $input ^ ' -1 p' | $calc}}
+	cstatus=$status
+	stack_str=$output(2)
+	ifs=' ' {stack=`{echo -n $stack_str}}
+	if(! ~ $expected_stack $"stack) {
+		echo '''' ^ $input ^ '''' ^ \
+			' produced unexpected stack ' ^ \
+			'''' ^ $"stack ^ '''' ^ \
+			'. expected ' ^ \
+			'''' ^ $expected_stack ^ '''.'
+		
+		if(! ~ $cstatus '') {
+			echo 'unexpected exit status ''' ^ \
+				$cstatus ^ ''''
+		}
+	}
+}
+
+mk $calc
+
+assert_stack '1 =x 2' '2'
+assert_stack '1 =x $x' '1'
+assert_stack '1 =x 2 =y 3 =z $x $y $z' '1 2 3'

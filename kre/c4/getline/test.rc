@@ -1,0 +1,8 @@
+#! /bin/rc
+
+echo \
+'Ah Love! could you and I with Fate conspire
+To graps this sorry Scheme of Things entire,
+Would not we shatter it to bits -- and then
+Re-mould it nearer to the Heart''s Desire!' | getline.out
+

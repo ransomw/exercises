@@ -9,6 +9,8 @@ programming exercises and notes from various books and public sources
 * [floating little leaves](http://poignant.guide/book/chapter-4.html) of [lua](http://www.lua.org/) from
 [_Programming in Lua_](https://www.lua.org/pil/contents.html) `lleaves`
 
+* [9-flavored](https://9fans.github.io/plan9port/) k&r exercises `kre`
+
 ### data processing
 
 * [_Python Machine Learning_](https://github.com/rasbt/python-machine-learning-book) `pylearn`

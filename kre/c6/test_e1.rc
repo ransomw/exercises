@@ -1,0 +1,47 @@
+#! /bin/rc
+
+exec=e1.out
+
+mk $exec
+
+input_01 = '
+int as_df = 1;
+char *s = "zxcv";
+char *t = "zx\"cv";
+'
+
+mebbe_tokens_01='int
+as_df
+char
+s
+char
+t
+'
+
+ifs='' {output_01 = `{echo $input_01 |$exec |grep -v '^ '}}
+
+if(! ~ $output_01 $mebbe_tokens_01)
+	echo 'unexpected output' && exit 1
+
+
+input_02 = '
+int as_df = 1;
+	// comment
+char *s = "zxcv";
+/* comm
+	ent */
+char *t = "zx\"cv";
+'
+
+mebbe_tokens_02='int
+as_df
+char
+s
+char
+t
+'
+
+ifs='' {output_02 = `{echo $input_02 |$exec |grep -v '^ '}}
+
+if(! ~ $output_02 $mebbe_tokens_02)
+	echo 'unexpected output' && exit 1

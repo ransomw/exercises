@@ -1,0 +1,22 @@
+#! /bin/rc
+
+fn check_calc_io {
+	input=$1
+	expected_output=$2
+	output=`{echo $input | e5.out}
+	if (! ~ `{echo $output | sed 's/^\t//'} \
+		$expected_output) {
+		echo '''' ^ $input ^ '''' ^ \
+			' produced unexpected output ' ^ \
+			'''' ^ $output ^ '''' ^ \
+			'. expected ' ^ \
+			'''' ^ $expected_output ^ '''.'
+	}
+
+}
+
+mk e5.out
+
+check_calc_io '3 4 Fhypot' '5'
+check_calc_io '2 3 Fpow' '8'
+check_calc_io '1.6 Fsin' '0.999573603'

@@ -1,0 +1,43 @@
+#! /bin/rc
+
+exec=e11.out
+
+tabbed_string='qwer	zxcv	xzcv	asdf'
+detabbed_string_expected='qwer zxcv  xzcv   asdf
+'
+
+tabbed_string='qwer	zxcv	xzcv	asdf
+qwert	y		x'
+detabbed_string_expected='qwer zxcv  xzcv   asdf
+qwert      y              x
+'
+
+mk $exec
+
+ifs='' {detabbed_string_actual=\
+	`{echo $tabbed_string |$exec -d 5 6 7}}
+
+if(! ~ $detabbed_string_expected $detabbed_string_actual) {
+	echo '''' ^ $tabbed_string ^ '''' ^ \
+		' detabbed to ' ^ \
+		'''' ^ $detabbed_string_actual ^ '''' ^ \
+		' when expecting ' ^ \
+		'''' ^ $detabbed_string_expected ^ ''''
+	exit
+}
+
+ifs='' {tabbed_string_actual=\
+	`{echo -n $detabbed_string_expected |$exec 5 6 7}}
+
+tabbed_string_expected = $tabbed_string ^ '
+'
+
+if(! ~ $tabbed_string_expected $tabbed_string_actual) {
+	echo '''' ^ $detabbed_string_expected ^ '''' ^ \
+		' entabbed to ' ^ \
+		'''' ^ $tabbed_string_actual ^ '''' ^ \
+		' when expecting ' ^ \
+		'''' ^ $tabbed_string_expected ^ ''''
+	exit
+}
+

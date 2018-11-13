@@ -1,0 +1,21 @@
+#! /bin/rc
+
+fn check_calc_io {
+	input=$1
+	expected_output=$2
+	output=`{echo $input | e3.out}
+	if (! ~ `{echo $output | sed 's/^\t//'} \
+		$expected_output) {
+		echo '''' ^ $input ^ '''' ^ \
+			' produced unexpected output ' ^ \
+			'''' ^ $output ^ '''' ^ \
+			'. expected ' ^ \
+			'''' ^ $expected_output ^ '''.'
+	}
+
+}
+
+
+mk e3.out
+
+check_calc_io '-.2 .8 +' '0.6'

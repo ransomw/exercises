@@ -1,0 +1,56 @@
+#! /bin/rc
+
+exec=e15.out
+
+sstrs_in='qwer
+asfd
+zxcv'
+
+sstrs_oute='asfd
+qwer
+zxcv
+'
+
+nums_in='123
+321
+27'
+
+nums_oute='27
+123
+321
+'
+
+cstrs_in='asdf
+ASDF'
+
+cstrs_oute='ASDF
+asdf
+'
+
+
+mk $exec
+
+ifs='' {sstrs_out=`{echo $sstrs_in |$exec}}
+
+if(! ~ $sstrs_out $sstrs_oute) {
+	echo '! ~' ^ $sstrs_out ^ '-' ^ $sstrs_oute
+}
+
+ifs='' {nums_out=`{echo $nums_in | $exec -n}}
+
+if(! ~ $nums_out $nums_oute) {
+	echo '! ~' ^ $nums_out ^ '-' ^ $nums_oute
+}
+
+ifs='' {cstrs_out=`{echo $cstrs_in |$exec}}
+
+if(! ~ $cstrs_out $cstrs_oute) {
+	echo '! ~' ^ $cstrs_out ^ '-' ^ $cstrs_oute
+}
+
+ifs='' {cstrs_out=`{echo $cstrs_in |$exec -f}}
+
+if(! ~ $cstrs_out $cstrs_in^'
+') {
+	echo '! ~' ^ $cstrs_out ^ '-' ^ $cstrs_oute
+}

@@ -1,0 +1,14 @@
+#! /bin/rc
+
+fn test_parse {
+	ins = $*(1)
+	echo '	' ^ $ins
+	echo $ins |e1.out
+}
+
+mk e1.out
+
+test_parse '10 +a 2' 
+test_parse '1 +  2'
+test_parse '1 +a 2'
+test_parse '-1 +2 -11'

@@ -1,0 +1,10 @@
+</$PLAN9/src/mkhdr
+
+%.$O:	%.c
+	$CC $CFLAGS $stem.c
+
+main.out:	main.$O stack_fns.$O stack_vars.$O
+	$LD $LDFLAGS -o $target $prereq
+
+clean:V:
+	rm *.out *.$O

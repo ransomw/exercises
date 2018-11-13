@@ -1,0 +1,5 @@
+</$PLAN9/src/mkhdr
+<../mkonebyone
+
+# e13.out: e13.$O hist.$O
+# 	$LD $LDFLAGS -o $target $prereq hist.$O

@@ -1,0 +1,24 @@
+#! /bin/rc
+
+mk e13.out
+
+echo '
+as0df1q
+qw' |e13.out -3
+
+echo '
+as0df1q
+qw' |e13.out -2
+
+echo '
+as0df1q
+qw' |e13.out -1
+
+echo '
+as0df1q
+qw' |e13.out -0
+
+echo '----'
+
+
+cat e13.c |e13.out -5

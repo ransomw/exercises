@@ -1,0 +1,10 @@
+#! /bin/rc
+
+nums = '10
+20
+23
+-5'
+
+echo $nums
+echo 'summed'
+echo $nums | calc.out

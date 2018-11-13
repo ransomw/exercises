@@ -1,0 +1,11 @@
+#! /bin/rc
+
+mk e7.out
+
+fn runnit {
+	cat $*(1) |e7.out 1>/dev/null
+}
+
+# time runnit /lib/mammals
+
+time e7.out < e7.c >[1] /dev/null

@@ -1,0 +1,13 @@
+</$PLAN9/src/mkhdr
+
+%.$O:	%.c
+	$CC $CFLAGS $stem.c
+
+calc.out:	calc_main.$O getline.$O atof.$O
+	$LD $LDFLAGS -o $target $prereq
+
+atof.out:	atof_main.$O atof.$O
+	$LD $LDFLAGS -o $target $prereq
+
+clean:V:
+	rm *.out *.$O

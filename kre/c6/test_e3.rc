@@ -1,0 +1,11 @@
+#! /bin/rc
+
+exec=e3.out
+
+input='asdf qwer asdf
+asdf
+zxcv'
+
+mk $exec
+
+echo -n $input |$exec

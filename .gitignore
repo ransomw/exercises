@@ -9,3 +9,4 @@ lleaves/plusc/techniques
 lleaves/plusc/*.so
 pylearn/scikit_sand/tree.dot
 pylearn/scikit_sand/tree.png
+*.out

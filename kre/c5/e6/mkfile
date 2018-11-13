@@ -1,0 +1,14 @@
+</$PLAN9/src/mkhdr
+
+%.$O:	%.c
+	$CC $CFLAGS $stem.c
+
+# see c5/sort.c for getline implemenation
+#	c5/e10.c for getop
+# todo: all functions listed in exercise
+# todo: additional functions from previous chapters
+main.out:	main.$O reverse.$O strindex.$O
+	$LD $LDFLAGS -o $target $prereq
+
+clean:V:
+	rm *.out *.$O

@@ -1,0 +1,14 @@
+#! /bin/rc
+
+fn test_parse {
+	ins = $*(1)
+	echo '	' ^ $ins
+	echo $ins |e2.out
+}
+
+mk e2.out
+
+test_parse '1.23'
+test_parse '1.23 3.21 -2.7'
+test_parse '3. 3.0 1. 0.01'
+test_parse '.1 -.12 .123'

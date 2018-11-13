@@ -1,0 +1,42 @@
+#! /bin/rc
+
+calc='e4.out'
+
+fn run_calc {
+	input=$1
+	echo 'in:	''' ^ $input ^ ''''
+	ifs='' {output=`{echo $input | $calc}}
+	echo $output
+}
+
+fn assert_stack {
+	input=$1
+	expected_stack=$2
+	ifs='><' {output=`{echo $input ^ ' -1 p' | $calc}}
+	stack_str=$output(2)
+	ifs=' ' {stack=`{echo -n $stack_str}}
+	if(! ~ $expected_stack $"stack) {
+		echo '''' ^ $input ^ '''' ^ \
+			' produced unexpected stack ' ^ \
+			'''' ^ $"stack ^ '''' ^ \
+			'. expected ' ^ \
+			'''' ^ $expected_stack ^ '''.'
+		
+	}
+}
+
+mk $calc
+echo
+
+fn prelim_tests {
+	run_calc '1 -.4 2 -.25 3.5 2 p'
+	run_calc '1 -.4 2 -.25 3.5 2 p -1 p'
+	run_calc '-1 p'
+}
+
+prelim_tests
+
+assert_stack '1 2 3' '1 2 3'
+assert_stack '1 2 3 s' '1 3 2'
+assert_stack '1 2 3 4 2 d' '1 2 3 4 3 4'
+assert_stack '1 2 3 c' ''
