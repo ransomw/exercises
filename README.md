@@ -11,11 +11,17 @@ programming exercises and notes from various books and public sources
 
 * [9-flavored](https://9fans.github.io/plan9port/) k&r exercises `kre`
 
+* notes on the [golang tour](https://golang.org/doc/#go_tour) `gotour`
+
 ### data processing
 
 * [_Python Machine Learning_](https://github.com/rasbt/python-machine-learning-book) `pylearn`
 
 ### algorithims
+
+* selections from
+  [CLRS](https://en.wikipedia.org/wiki/Introduction_to_Algorithms)
+  in Go `clrs_go`
 
 * [project φuler](http://projecteuler.net/) `project_euler`
 
