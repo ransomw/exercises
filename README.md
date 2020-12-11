@@ -13,6 +13,10 @@ programming exercises and notes from various books and public sources
 
 * notes on the [golang tour](https://golang.org/doc/#go_tour) `gotour`
 
+### systems
+
+* [plan9port](https://9fans.github.io/plan9port/)ed-**ish** source from Prof. Ballesteros' [Plan 9 Operating Systems text](http://lsub.org/who/nemo/papers.html) `nemo`
+
 ### data processing
 
 * [_Python Machine Learning_](https://github.com/rasbt/python-machine-learning-book) `pylearn`

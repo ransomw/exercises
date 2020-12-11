@@ -1,0 +1,17 @@
+#! /bin/rc
+
+# give this script the program counter address
+# printed upon running dbghi.out
+
+# -n suppresses sending output to the editor
+#	(via the plumber, presumably) and prints
+#	to stdout instead
+
+# -s is a symbol -- or in this case, a virtual memory address --
+#	to locate in the binary.
+#	note in particular that `dofmt` (the symbol in question
+#	at the address where dbghi.out crashes) is at a slightly
+#	greater addr than the debug information used by the `nm`
+#	command as in loaded_programs.rc
+
+src -n -s $* dbghi.out

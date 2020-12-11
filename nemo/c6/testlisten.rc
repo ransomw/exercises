@@ -1,0 +1,44 @@
+#! /bin/rc
+
+# match port in listen.c
+port = 9988
+
+if(netstat |grep -s $port && \
+	! netstat |grep $port |grep -s Closed) {
+	echo 'error: ' ^ $port ^ ' already in use!'
+	exit
+}
+
+exec=listen.out
+
+mk $exec
+
+if(! ~ $status '') {
+	echo 'build error!'
+	exit 0
+}
+
+
+echo 'running ' ^ $exec
+@{$exec |sed 's/(.*)/' ^ $exec ^ ': \1/'} &
+listenpid=$apid
+# it takes a second to announce
+sleep 1
+echo
+
+# sysname is an environment variable from ndb(8)
+# in /lib/ndb/local by (9front) default..
+# todo: describe exactly how sysname is made available to rc
+#	in rio
+echo 'available to connect (via telnet(1) or con(1)) at ''' ^ \
+	'tcp!' ^ $sysname ^ '!' ^ $port ^ ''''
+echo 'press enter/return when done'
+read
+
+kill $exec |rc
+
+if(netstat |grep $port |grep -s Closed) {
+	echo 'exit ok'
+}
+if not { echo 'error: ' ^ $exec ^ ' still running!' }
+

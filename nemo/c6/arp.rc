@@ -1,0 +1,16 @@
+#! /bin/rc
+
+ii = 0
+
+# see
+# https://en.wikipedia.org/wiki/Address_Resolution_Protocol
+# particularly
+# https://en.wikipedia.org/wiki/Address_Resolution_Protocol#Alternatives_to_ARP
+#
+# this is nothing more than a mapping of IP addresses to
+# hardware (i.e. ethernet device) addresses
+
+echo 'Address Resolution Protocol cache'
+echo 'type of medium - status (OK, WAIT) - IP address - ' ^ \
+	'medium address (mac addr)'
+cat '#I' ^ $ii ^ '/arp'

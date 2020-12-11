@@ -1,0 +1,188 @@
+#! /bin/rc
+
+#
+# print some information about the kernel interfaces
+# used to implement networking:
+# * #l -- ethernet
+# * #I -- internet protocol
+#
+
+
+# both physical (ethernet) and transport (IP) layers
+# are kernel devices.  indices distinguish, e.g., cable and
+# wireless connections at the physical layer
+ie='1'
+ii='0'
+
+# from https://en.wikipedia.org/wiki/EtherType
+ethtypes=('0x0800 Internet Protocol version 4 (IPv4)' \
+'0x0806 Address Resolution Protocol (ARP)' \
+'0x0842 Wake-on-LAN[9]' \
+'0x22F3 IETF TRILL Protocol' \
+'0x22EA Stream Reservation Protocol' \
+'0x6003 DECnet Phase IV' \
+'0x8035 Reverse Address Resolution Protocol' \
+'0x809B AppleTalk (Ethertalk)' \
+'0x80F3 AppleTalk Address Resolution Protocol (AARP)' \
+'0x8100 VLAN-tagged frame (IEEE 802.1Q) and Shortest Path Bridging IEEE 802.1aq with NNI compatibility[10]' \
+'0x8137 IPX' \
+'0x8204 QNX Qnet' \
+'0x86DD Internet Protocol Version 6 (IPv6)' \
+'0x8808 Ethernet flow control' \
+'0x8809 Ethernet Slow Protocols[11] such as the Link Aggregation Control Protocol' \
+'0x8819 CobraNet' \
+'0x8847 MPLS unicast' \
+'0x8848 MPLS multicast' \
+'0x8863 PPPoE Discovery Stage' \
+'0x8864 PPPoE Session Stage' \
+'0x886D Intel Advanced Networking Services [12]' \
+'0x8870 Jumbo Frames (Obsoleted draft-ietf-isis-ext-eth-01)' \
+'0x887B HomePlug 1.0 MME' \
+'0x888E EAP over LAN (IEEE 802.1X)' \
+'0x8892 PROFINET Protocol' \
+'0x889A HyperSCSI (SCSI over Ethernet)' \
+'0x88A2 ATA over Ethernet' \
+'0x88A4 EtherCAT Protocol' \
+'0x88A8 Provider Bridging (IEEE 802.1ad) & Shortest Path Bridging IEEE 802.1aq[10]' \
+'0x88AB Ethernet Powerlink[citation needed]' \
+'0x88B8 GOOSE (Generic Object Oriented Substation event)' \
+'0x88B9 GSE (Generic Substation Events) Management Services' \
+'0x88BA SV (Sampled Value Transmission)' \
+'0x88CC Link Layer Discovery Protocol (LLDP)' \
+'0x88CD SERCOS III' \
+'0x88DC WSMP, WAVE Short Message Protocol' \
+'0x88E1 HomePlug AV MME[citation needed]' \
+'0x88E3 Media Redundancy Protocol (IEC62439-2)' \
+'0x88E5 MAC security (IEEE 802.1AE)' \
+'0x88E7 Provider Backbone Bridges (PBB) (IEEE 802.1ah)' \
+'0x88F7 Precision Time Protocol (PTP) over Ethernet (IEEE 1588)' \
+'0x88F8 NC-SI' \
+'0x88FB Parallel Redundancy Protocol (PRP)' \
+'0x8902 IEEE 802.1ag Connectivity Fault Management (CFM) Protocol / ITU-T Recommendation Y.1731 (OAM)' \
+'0x8906 Fibre Channel over Ethernet (FCoE)' \
+'0x8914 FCoE Initialization Protocol' \
+'0x8915 RDMA over Converged Ethernet (RoCE)' \
+'0x891D TTEthernet Protocol Control Frame (TTE)' \
+'0x892F High-availability Seamless Redundancy (HSR)' \
+'0x9000 Ethernet Configuration Testing Protocol[13]' \
+'0x9100 VLAN-tagged (IEEE 802.1Q) frame with double tagging')
+
+fn printethertype {
+	hex=$*(1)
+	for(et in $ethtypes) {
+		ifs=' ' {ets = `{echo $et}}
+		ethex = $ets(1)
+		if(~ 1 `{echo $hex ^ ' == ' ^ $ethex | pc -n}) {
+			echo $et
+		}
+	}
+}
+
+direther = '#l' ^ $ie ^ '/ether' ^ $ie ^ '/'
+
+echo 'ethernet interface at ' ^ $direther
+lc $direther
+echo 'with mac (i.e. hardware) address/id'
+cat $direther ^ 'addr' && echo
+echo 'has connections (i.e. kernel multiplexing by packet type)'
+# todo: promiscuous connections, -1 and -2 packet types
+#	see ether(3)
+for(ent in `{ls $direther | sed 's/''//g'}) {
+	bent = `{basename $ent}
+	if(test -d `{echo $ent}) {
+		inttype = `{cat $ent ^ '/type'}
+		hextype = `{echo 'hex(' ^ $inttype ^ ')' | pc -n}
+		typedesc = `{printethertype $hextype}
+		echo $"bent ^ ' of type ' ^ $"inttype ^ \
+			' - ' ^ $"typedesc
+	}
+}
+
+echo
+
+fn printipifstatus {
+	line = $*(1)
+	ifs=' ' {namesandvals = `{echo $line}}
+
+
+	echo ' interface status'
+	for(idx in `{seq $#namesandvals})
+		if(~ 1 `{echo $idx ^ ' % 2' | pc -n}) {
+			echo -n '	'
+			echo $namesandvals($idx) ^ ' - ' ^ \
+	$namesandvals(`{echo $idx ^ '+ 1' | pc -n})
+		}
+}
+
+fn printipifaddrstatus {
+	line = $*(1)
+	ifs=' 	' {cols = `{echo $line}}
+	colnames = ('ip' 'ipmask' 'ipgw' 'msvalid' 'mspreferred')
+
+	echo ' address status (compare to /net/ndb)'
+	# `{seq $#colnames}
+	for(idx in 1 2 3) {
+		echo -n '	'
+		echo $colnames($idx) ^ ' - ' ^ $cols($idx)
+	}
+}
+
+rootdirip = '#I' ^ $ii ^ '/ipifc/'
+
+echo 'IP stack base at ' ^ $rootdirip
+lc $rootdirip
+for(ent in `{ls $rootdirip | sed 's/''//g'}) {
+	bent = `{basename $ent}
+	if(test -d `{echo $ent}) {
+		echo 'interface ' ^ $bent ^ ' status'
+		ifs='
+' {lines = `{cat $ent ^ '/status'}}
+		readfirstline = 0
+		for(line in $lines) {
+			if(~ 0 $readfirstline) {
+				echo -n ' '
+				echo `{printipifstatus $line \
+					|grep device}
+			}
+			if(! ~ 0 $readfirstline) {
+				printipifaddrstatus $line
+			}
+			if(~ 0 $readfirstline) {
+				readfirstline = 1
+			}
+		}
+	}
+}
+
+# todo: understand bootp usage in Plan 9
+#	https://en.wikipedia.org/wiki/Bootstrap_Protocol
+# todo: revisit ndb
+
+# '#I/log' is a special file to hold open in order to
+# get debug messages printed.
+echo
+echo 'IP kernel device special files'
+for(ent in `{ls '#I' ^ $ii ^ '/' | sed 's/''//g'}) {
+	bent = `{basename $ent}
+	if(! test -d `{echo $ent}) {
+		echo -n '''' ^  $ent ^ ''' '
+	}
+}
+echo
+
+echo 'IP kernel device protocols'
+for(ent in `{ls '#I' ^ $ii ^ '/' | sed 's/''//g'}) {
+	bent = `{basename $ent}
+	if(test -d `{echo $ent}) # &&
+		# described above
+		if(! ~ $bent 'ipifc') # &&
+		# ipmux is experimental functionality
+		# todo: ip(3) IP packet filter section
+		if(! ~ $bent 'ipmux') {
+		echo -n '''' ^  $ent ^ ''' '
+	}
+}
+echo
+
+exit 0
+

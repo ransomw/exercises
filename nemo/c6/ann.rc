@@ -1,0 +1,48 @@
+#! /bin/rc
+
+# abortive attempt to provide services from the shell..
+# .. or,
+# a demonstration as to why services can't be provided
+# by the shell:  the same process that announces is
+# expected to listen.
+
+netdirbase = /net/tcp/
+netdir = $netdirbase ^ 'clone'
+naddr = 9988
+
+connno=`{cat $netdir}
+
+echo 'opened tcp connection ' ^ $connno
+
+conndir = $netdirbase ^ $connno ^ '/'
+connctl = $conndir ^ 'ctl'
+
+echo
+echo 'netstat'
+netstat |grep $naddr
+
+lc $conndir
+
+echo
+echo 'announcing'
+echo 'announce ' ^ $naddr > $connctl
+
+lc $conndir
+
+echo
+echo 'netstat'
+netstat |grep $naddr
+
+lc $conndir
+
+echo
+echo 'hanging up'
+echo hangup > $connctl
+
+lc $conndir
+
+echo
+echo 'netstat'
+netstat |grep $naddr
+
+lc $conndir

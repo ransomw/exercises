@@ -1,0 +1,18 @@
+#! /bin/rc
+
+exec=envvars.out
+
+mk $exec
+
+# rc doesn't distinguish between variables and environement
+# variables with `export` -- all variables in scope are env vars
+myenvvar='hey-lo'
+
+echo $mycenvvar
+
+$exec
+
+# C programs can set environment variables as well.
+# todo: sort out rules for environment variables when
+#   setting in a C ..
+echo $mycenvvar

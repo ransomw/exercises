@@ -1,0 +1,3 @@
+#! /bin/rc
+
+aux/listen1 tcp!*!9988 cat

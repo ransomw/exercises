@@ -1,0 +1,33 @@
+#! /bin/rc
+
+# -F Enables type-checking of calls to print(2) and other
+#	formatted print routines
+# -V ANSI C type checks of void * against other pointer types
+# -w warning messages
+
+
+8c -FVw global1mb.c
+8c -FVw global2mb.c
+8l -o 8.global1mb global1mb.8
+8l -o 8.global2mb global2mb.8
+
+# binaries are both of the same size --
+# they do not contain storage space for the uninitialized array.
+# neither does the object file.
+ls -l 8.global1mb 8.global2mb global1mb.8
+
+echo
+
+# debug symbols occupy some space in binaries
+strip 8.global2mb
+ls -l 8.global2mb
+
+# this describes the virtual memory address space
+# of the program when it's loaded into memory
+echo
+echo '0 [program text] etext [initialized data] edata ' ^ \
+	'[uninitialized data] end'
+
+nm -n 8.global1mb
+
+rm 8.global1mb global1mb.8 8.global2mb global2mb.8

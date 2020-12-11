@@ -1,0 +1,20 @@
+#! /bin/rc
+
+# rc has its own rfork builtin to obtain copies of resources
+# as in rforkls.c
+
+rfork e
+
+myvar = 'asdf'
+
+echo 'myvar=' ^ $myvar
+
+echo 'now to to echo $myvar in the shell that ran this script'
+echo 'followed by a "" to repeat the echo'
+echo 'try it again with the rfork commented out'
+
+# in addition to 'e', 'n' can be used to fork namespaces as in
+
+rfork ne
+
+# a standard beginning for many shell scripts

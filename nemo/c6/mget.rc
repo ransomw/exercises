@@ -1,0 +1,136 @@
+#! /bin/rc
+
+# kinda like hget(1)
+# demonstrates some use of kernel tcp device
+#
+# srv(4) does the work of setting up a connection.
+# it calls a libc function dial(2), and dial in turn
+# uses /sys/src/cmd/ndb/cs.c, a server started on boot
+# (todo: where?) to lookup the address string.
+# in the case of IP addresses (tcp!, etc.) requiring DNS lookup,
+# cs dnsquery()s a significantly more complicated program
+#    952 dns.c
+#    538 dns.h
+#    336 dnudpserver.c
+#   1990 dn.c
+#   1571 dnresolve.c
+#   1227 dblookup.c
+#    210 dnserver.c
+#    151 dnnotify.c
+# (also in /sys/src/cmd/ndb/).
+#
+# todo: (waaaay down the line) familiarize with these
+# (cs, dns) programs mentioned in ndb(8)
+
+
+kernelcloseconn = 0
+kerneldatafile = 0
+usemysrv = 0
+
+while(~ $*(1) -?) {
+	flag = $*(1)
+	echo 'got flag ' ^ $flag
+	if(~ $flag -c) { kernelcloseconn = 1 }
+	if(~ $flag -d) { kerneldatafile = 1 }
+	if(~ $flag -m) { usemysrv = 1 }
+	shift 1
+}
+
+fn getopentcpconns {
+	for(file in `{ls /net/tcp}) {
+		if(test -d $file)
+		if(! ~ `{cat $file ^ '/status'} Closed*)
+			echo -n `{basename $file} ^ ' '
+	}
+}
+
+opentcpconnsbefore = `{getopentcpconns}
+
+echo 'opentcpconnsbefore ' ^ $#opentcpconnsbefore
+echo $opentcpconnsbefore
+echo
+
+if(! ~ $#* 1) {
+	echo 'missing system address (url)'
+	exit 1
+}
+
+# todo: determine where service-name->port lookup occurs
+addr = 'tcp!' ^ $*(1) ^ '!http'
+srvfile = '/srv/' ^ $addr
+
+echo 'test passing 9-flavored address ''' ^ $addr ^ \
+	''' to connection server'
+ndb/csquery <<!
+$addr
+!
+
+echo
+echo
+if(~ 0 $usemysrv) { 
+	echo 'running srv(4)'
+	srv $addr
+}
+if not {
+	srvexec = msrv.out
+	echo 'building and running ' ^ $srvexec
+	mk $srvexec
+	$srvexec $addr
+}
+
+
+echo
+
+opentcpconnsafter = `{getopentcpconns}
+
+echo 'opentcpconnsafter ' ^ $#opentcpconnsafter
+echo $opentcpconnsafter
+echo
+
+newtcpconn=`{for(tcpconna in $opentcpconnsafter) {
+	exists = `{for(tcpconnb in $opentcpconnsbefore) {
+		if(~ $tcpconna $tcpconnb) {
+			echo yep
+		}
+	}}
+	if(! ~ $exists yep) {
+		echo -n $tcpconna
+	}
+}}
+
+echo 'newtcpconn '  ^ $newtcpconn ^ ' interface'
+tcpiface = '/net/tcp/' ^ $newtcpconn
+lc $tcpiface
+echo '..with ' ^ \
+	'local (' ^ `{cat $tcpiface ^ '/local'} ^ ')' ^ \
+	' and ' ^ \
+	'remote (' ^ `{cat $tcpiface ^ '/remote'} ^ ')' ^ \
+	' ip addresses'
+echo '...and with ' ^ \
+	`{cat $tcpiface ^ '/status' |sed 's/([^ ]+).*/\1/'} ^ \
+	' status'
+echo
+
+if(~ $kernelcloseconn 1) {
+	echo hangup > $tcpiface ^ '/ctl'
+	sleep 2
+}
+
+echo 'enter to continue'
+read
+
+if(~ 0 $kerneldatafile) { reqfile = $srvfile }
+if not { reqfile = $tcpiface ^ '/data'}
+
+echo 'writing request to ' ^ $reqfile
+echo GET / >>$reqfile
+
+echo 'reading resp'
+read -n 3 $reqfile
+
+# this cleans up the connection if it's still around
+if(test -e $srvfile) {
+	rm $srvfile;
+	echo 'removed srv file'
+}
+if not { echo $srvfile ^ ' gon'}

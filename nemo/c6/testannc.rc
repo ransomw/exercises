@@ -1,0 +1,35 @@
+#! /bin/rc
+
+# match port in ann.c
+port = 9988
+
+if(netstat |grep -s $port && \
+	! netstat |grep $port |grep -s Closed) {
+	echo 'error: ' ^ $port ^ ' already in use!'
+	exit
+}
+
+exec=ann.out
+
+mk $exec
+
+echo
+echo 'running ' ^ $exec
+$exec &
+annpid=$apid
+# it takes a second to announce
+sleep 1
+echo
+
+echo 'running netstat'
+netstat |grep $port
+
+echo 're-running ' ^ $exec
+$exec
+
+kill $exec |rc
+
+if(netstat |grep $port |grep -s Closed) {
+	echo 'exit ok'
+}
+if not { echo 'error: ' ^ $exec ^ ' still running!' }

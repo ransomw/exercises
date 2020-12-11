@@ -1,0 +1,4 @@
+</$PLAN9/src/mkhdr
+<../mkonebyone
+
+# todo: comment on ticker*.c QLock and RWLock demos

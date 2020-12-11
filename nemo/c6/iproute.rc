@@ -1,0 +1,36 @@
+#! /bin/rc
+
+ii = 0
+
+#https://en.wikipedia.org/wiki/IP_routing
+# if ( N matches a directly connected network address )
+#	Deliver datagram to D over that network link;
+# else if ( The routing table contains a route for N )
+#	Send datagram to the next-hop address listed 
+#		in the routing table;
+# else if ( a default route exists )
+#	Send datagram to the default route;
+# else
+#	Send a forwarding error message to the originator;
+
+
+#https://en.wikipedia.org/wiki/Default_route
+# 0.0.0.0 is the default route
+
+# /iproute gives 128-bit masks, so
+# 10.0.1.0 /120 10.0.1.0
+# says 'send 10.0.1.0-255 to 10.0.1.0'
+
+# interface number is omitted from broadcast addresses ('b' flag)
+# b/c the meaning of a broadcast address
+# is that it sends packets to all connected devices.
+
+echo 'IP routing table (programmable)'
+echo 'target address - target mask - ' ^ \
+	' address of next hop - ' ^ \
+	'flags - tag - interface number'
+cat '#I' ^ $ii ^ '/iproute'
+
+echo
+echo 'compare to local addresses exposed by the stack (dbg info)'
+cat '#I' ^ $ii ^ '/ipselftab'

@@ -1,0 +1,11 @@
+#! /bin/rc
+
+exec=becho.out
+
+mk $exec
+
+$exec -vn repeat after me
+echo
+# -- means no further opt args follow
+$exec -- -d repeat after me
+$exec -v -d"" repeat after me
